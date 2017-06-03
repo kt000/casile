@@ -154,6 +154,7 @@ promotionals: $(foreach TARGET,$(TARGETS),$(foreach PANKART,$(PANKARTLI),$(TARGE
 # If a series, add some extra dependencies to convenience builds
 ifneq ($(words $(TARGETS)),1)
 promotionals: series_promotionals
+renderings: series_renderings
 endif
 
 .PHONY: series_promotionals
@@ -162,6 +163,14 @@ series_promotionals: $(PROJECT)-covers.jpg
 $(PROJECT)-covers.png: $(foreach TARGET,$(TARGETS),$(TARGET)-epub-kapak.png)
 	$(addtosync)
 	$(MAGICK) $(filter %.png,$^) +append $@
+
+.PHONY: series_renderings
+series_renderings: $(PROJECT)-$(PUBLAYOUT)-3b-series.jpg
+
+$(PROJECT)-$(PUBLAYOUT)-3b-series.png: %-3b-series.png: %-3b-series.pov
+
+%-3b-series.pov: $(foreach TARGET,$(TARGETS),$(TARGET)-$(PUBLAYOUT)-3b.pov) | $(CASILEDIR)/series.pov
+	echo Render $^
 
 .PHONY: clean
 clean: $(and $(CIMODE),init)
